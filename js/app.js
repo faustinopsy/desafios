@@ -1,29 +1,41 @@
 document.addEventListener("DOMContentLoaded", ()=>{
-    const historicoCompras = [
-        ["notebook", "mouse", "teclado"],
-        ["smartphone", "capa de celular", "película"],
-        ["notebook", "mochila", "mouse"],
-        ["smartphone", "fones de ouvido", "capa de celular"],
-        ["teclado", "mouse", "tapete de mouse"]
+    const estoqueProdutos = [
+        { nome: "arroz", quantidade: 10 },
+        { nome: "feijão", quantidade: 8 },
+        { nome: "óleo", quantidade: 5 },
+        { nome: "macarrão", quantidade: 15 },
+        { nome: "açúcar", quantidade: 7 }
     ];
+
+    document.querySelector("#formVenda").addEventListener("submit", (e) => {
+        e.preventDefault(); 
+        const produto = document.querySelector("#produto").value.toLowerCase();
+        const quantidadeVendida = parseInt(document.querySelector("#quantidade").value);
    
-    const input = document.querySelector("#produto")
-    const lista = document.querySelector("#lista")
-
-    input.addEventListener("blur", (e)=>{
-       const produto = e.target.value.toLowerCase();
-       let text ='';
-
-       const historico = historicoCompras.values();
-       for (let item of historico) {
-            if(item.includes(produto)){
-                let index = item.indexOf(produto);
-                item.splice(index,1)
-                    text += item + "<br>";
+    const produtoEncontrado = estoqueProdutos.find(item => item.nome === produto);
+        if (produtoEncontrado) {
+            if (produtoEncontrado.quantidade < 5) {
+                alertaBaixoEstoque(produtoEncontrado.nome);
+                return true
             }
-       }
-         
-        lista.innerHTML = `<b>Produtos recomendados:</b> <br>${text}`
-    })
+            if(quantidadeVendida > produtoEncontrado.quantidade){
+                alertaBaixoEstoque(produtoEncontrado.nome);
+                return true
+            }
+            produtoEncontrado.quantidade -= quantidadeVendida;
+            exibirEstoque()
+    }
+    function exibirEstoque() {
+        const lista = document.querySelector("#listaEstoque");
+        lista.innerHTML = ""; 
+        estoqueProdutos.forEach(produto => {
+            lista.innerHTML += `<li>${produto.nome}: ${produto.quantidade} unidades</li>`;
+        });
+    }
+    function alertaBaixoEstoque(nome){
+        alert(`O produto ${nome} Está com quantida baixa no estoque`)
+    }
+    
+});
   
 })
